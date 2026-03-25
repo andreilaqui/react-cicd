@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token') // this guy is used automatically by the netlify CLI tool
-        NETLIFY_SITE_ID = credentials('netlify-site-id')
+        // NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token') // this guy is used automatically by the netlify CLI tool
+        // NETLIFY_SITE_ID = credentials('netlify-site-id')
     }
 
     stages {
