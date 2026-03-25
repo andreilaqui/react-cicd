@@ -48,6 +48,11 @@ pipeline {
                     sh'''
                         aws --version
                         aws s3 ls
+                        echo "hello, S3!" > index.html
+                        # aws s3 cp index.html s3://andreilaqui-s3-cicd/index.html
+                        aws s3 sync dist s3://andreilaqui-s3-cicd/
+
+
                     '''
                 }
             }
