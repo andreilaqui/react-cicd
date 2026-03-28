@@ -7,17 +7,17 @@ pipeline {
     // }
 
     stages {
-        // stage('Install Dependencies') {
-        //     steps {
-        //         sh 'npm install'
-        //     }
-        // }
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm install'
+            }
+        }
 
-        // stage('Build App') {
-        //     steps {
-        //         sh 'npm run build'
-        //     }
-        // }
+        stage('Build App') {
+            steps {
+                sh 'npm run build'
+            }
+        }
 
         // stage('Deploy to Netlify') {
         //     steps {
@@ -48,8 +48,6 @@ pipeline {
                     sh'''
                         aws --version
                         aws s3 ls
-                        echo "hello, S3!" > index.html
-                        # aws s3 cp index.html s3://andreilaqui-s3-cicd/index.html
                         aws s3 sync dist s3://andreilaqui-s3-cicd/
 
 
