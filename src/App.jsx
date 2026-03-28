@@ -16,7 +16,7 @@ function App() {
           <img src={viteLogo} className="vite" alt="Vite logo" />
         </div>
         <div>
-          <h1>Get started. Jenkins Pipeline test. Netlify deployment test.</h1>
+          <h1>Get started. Jenkins to AWS S3 Pipeline test.</h1>
           <p>
             Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
           </p>
@@ -30,8 +30,6 @@ function App() {
       </section>
 
       <div className="ticks"></div>
-
-      
 
       <div className="ticks"></div>
       <section id="spacer"></section>
