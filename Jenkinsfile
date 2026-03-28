@@ -49,8 +49,6 @@ pipeline {
                         aws --version
                         aws s3 ls
                         aws s3 sync dist s3://andreilaqui-s3-cicd/
-
-
                     '''
                 }
             }
