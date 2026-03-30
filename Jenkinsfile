@@ -71,6 +71,8 @@ pipeline {
                         aws --version
                         aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
 
+                        aws ecs update-service --cluster andrei-react-cicd-cluster --service react-cicd-service --task-definition react-cicd-json-task:1
+
                     '''
                 }
                 
