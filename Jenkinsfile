@@ -61,7 +61,7 @@ pipeline {
                 docker {
                     image 'amazon/aws-cli'
                     reuseNode true
-                    args '--entrypoint=""'
+                    args '-u root --entrypoint=""'
                 }
             }
 
@@ -69,8 +69,11 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'jenkins-s3', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                     sh '''
                         aws --version
-                        # aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
-                        aws ecs update-service --cluster andrei-react-cicd-cluster --service react-cicd-service --task-definition react-cicd-json-task:2
+
+                        yum install jq -y
+
+                        LATEST_TD_REVISION = $( aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq -r '.taskDefinition.revision' )
+                        aws ecs update-service --cluster andrei-react-cicd-cluster --service react-cicd-service --task-definition react-cicd-json-task:$LATEST_TD_REVISION
 
                     '''
                 }
