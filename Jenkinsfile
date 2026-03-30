@@ -1,23 +1,25 @@
 pipeline {
     agent any
 
-    // environment {
+    environment {
     //     // NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token') // this guy is used automatically by the netlify CLI tool
     //     // NETLIFY_SITE_ID = credentials('netlify-site-id')
-    // }
+        AWS_DEFAULT_REGION = 'us-east-2'
+       
+    }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install'
-            }
-        }
+        // stage('Install Dependencies') {
+        //     steps {
+        //         sh 'npm install'
+        //     }
+        // }
 
-        stage('Build App') {
-            steps {
-                sh 'npm run build'
-            }
-        }
+        // stage('Build App') {
+        //     steps {
+        //         sh 'npm run build'
+        //     }
+        // }
 
         // stage('Deploy to Netlify') {
         //     steps {
@@ -35,23 +37,53 @@ pipeline {
         //     }
         // }
 
-        stage('AWS'){
+        // stage('AWS'){
+        //     agent{
+        //         docker {
+        //             image 'amazon/aws-cli'
+        //             reuseNode true
+        //             args '--entrypoint=""' // this allows the AWS CLI container to access the Docker daemon on the Jenkins host, enabling it to run Docker commands if needed
+        //         }
+        //     }
+        //     steps {
+        //         withCredentials([usernamePassword(credentialsId: 'jenkins-s3', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+        //             sh'''
+        //                 aws --version
+        //                 aws s3 ls
+        //                 aws s3 sync dist s3://andreilaqui-s3-cicd/
+        //             '''
+        //         }
+        //     }
+        // }
+        
+        stage('Deploy to AWS ECS'){
             agent{
                 docker {
                     image 'amazon/aws-cli'
                     reuseNode true
-                    args '--entrypoint=""' // this allows the AWS CLI container to access the Docker daemon on the Jenkins host, enabling it to run Docker commands if needed
+                    args '--entrypoint=""'
                 }
             }
-            steps {
+
+            steps{
                 withCredentials([usernamePassword(credentialsId: 'jenkins-s3', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh'''
+                    sh '''
                         aws --version
-                        aws s3 ls
-                        aws s3 sync dist s3://andreilaqui-s3-cicd/
+                        aws ecs register-task-definition --cli-input-json file://aws/task-definition.json
+
                     '''
                 }
+                
+
+
+
+
             }
+
+
+
+
+
         }
 
 
