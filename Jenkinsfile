@@ -4,8 +4,7 @@ pipeline {
     environment {
     //     // NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token') // this guy is used automatically by the netlify CLI tool
     //     // NETLIFY_SITE_ID = credentials('netlify-site-id')
-        AWS_DEFAULT_REGION = 'us-east-2'
-       
+        AWS_DEFAULT_REGION='us-east-2'
     }
 
     stages {
