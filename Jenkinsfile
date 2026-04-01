@@ -90,7 +90,7 @@ pipeline {
             steps {
                 sh '''
                     dnf install -y docker
-                    docker dist -t andrei-react-cicd-image .
+                    docker build -t andrei-react-cicd-image .
                     docker images
                 '''
             }
