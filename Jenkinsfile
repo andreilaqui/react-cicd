@@ -76,17 +76,21 @@ pipeline {
 
                     '''
                 }
-                
-
-
-
-
             }
+        }
 
-
-
-
-
+        stage('Build My Image') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli'
+                    reuseNode true
+                    args '-u root --entrypoint=""'}
+            }
+            steps {
+                dnf install -y docker
+                docker build -t andrei-react-cicd-image .
+                docker images
+            }
         }
 
 
