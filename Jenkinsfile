@@ -4,7 +4,9 @@ pipeline {
     environment {
     //     // NETLIFY_AUTH_TOKEN = credentials('netlify-auth-token') // this guy is used automatically by the netlify CLI tool
     //     // NETLIFY_SITE_ID = credentials('netlify-site-id')
-        AWS_DEFAULT_REGION='us-east-2'
+        AWS_DEFAULT_REGION = 'us-east-2'
+        AWS_DOCKER_REGISTRY = '521495323881.dkr.ecr.us-east-2.amazonaws.com'
+        APP_NAME = 'my-react-repo'
     }
 
     stages {
@@ -55,29 +57,7 @@ pipeline {
         //     }
         // }
         
-        stage('Deploy to AWS ECS'){
-            agent{
-                docker {
-                    image 'amazon/aws-cli'
-                    reuseNode true
-                    args '-u root --entrypoint=""'
-                }
-            }
-
-            steps{
-                withCredentials([usernamePassword(credentialsId: 'jenkins-s3', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
-                    sh '''
-                        aws --version
-
-                        yum install jq -y
-
-                        LATEST_TD_REVISION=$( aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq -r '.taskDefinition.revision' )
-                        aws ecs update-service --cluster andrei-react-cicd-cluster --service react-cicd-service --task-definition react-cicd-json-task:$LATEST_TD_REVISION
-
-                    '''
-                }
-            }
-        }
+        
 
         stage('Build My Image') {
             agent {
@@ -88,13 +68,47 @@ pipeline {
                     }
             }
             steps {
-                sh '''
-                    dnf install -y docker
-                    docker build -t andrei-react-cicd-image .
-                    docker images
-                '''
+                 withCredentials([usernamePassword(credentialsId: 'my-aws', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) 
+                 {
+
+                    sh '''
+                        dnf install -y docker
+                        docker build -t $AWS_DOCKER_REGISTRY/$APP_NAME .
+                        docker images
+
+                        # access ECR, username is AWS, get temporary password
+                        aws ecr get-login-password | docker login --username AWS --password-stdin $AWS_DOCKER_REGISTRY
+                        docker push $AWS_DOCKER_REGISTRY/$APP_NAME:latest
+
+                    '''
+                 }
             }
         }
+
+
+        // stage('Deploy to AWS ECS'){
+        //     agent{
+        //         docker {
+        //             image 'amazon/aws-cli'
+        //             reuseNode true
+        //             args '-u root --entrypoint=""'
+        //         }
+        //     }
+
+        //     steps{
+        //         withCredentials([usernamePassword(credentialsId: 'jenkins-s3', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+        //             sh '''
+        //                 aws --version
+
+        //                 yum install jq -y
+
+        //                 LATEST_TD_REVISION=$( aws ecs register-task-definition --cli-input-json file://aws/task-definition.json | jq -r '.taskDefinition.revision' )
+        //                 aws ecs update-service --cluster andrei-react-cicd-cluster --service react-cicd-service --task-definition react-cicd-json-task:$LATEST_TD_REVISION
+
+        //             '''
+        //         }
+        //     }
+        // }
 
 
 

@@ -6,7 +6,7 @@
     "containerDefinitions": [
         {
             "name": "react-cicd-json-container",
-            "image": "nginx:1.27-alpine",
+            "image": "521495323881.dkr.ecr.us-east-2.amazonaws.com/my-react-repo:latest",
             "portMappings": [
                 {
                     "name": "ngnix-80-tcp",
