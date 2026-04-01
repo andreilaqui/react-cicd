@@ -84,12 +84,15 @@ pipeline {
                 docker {
                     image 'amazon/aws-cli'
                     reuseNode true
-                    args '-u root --entrypoint=""'}
+                    args '-u root -v /var/run/docker.sock:/var/run/docker.sock --entrypoint=""'
+                    }
             }
             steps {
-                dnf install -y docker
-                docker build -t andrei-react-cicd-image .
-                docker images
+                sh '''
+                    dnf install -y docker
+                    docker build -t andrei-react-cicd-image .
+                    docker images
+                '''
             }
         }
 
